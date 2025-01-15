@@ -30,7 +30,6 @@ func TestFindpaths(t *testing.T) {
 
 	// fmt.Println("B4: ", vars.AllPaths)
 	FindPaths("start", "end")
-	fmt.Println("Af: ", vars.AllPaths)
 
 	if len(vars.AllPaths) <= 0 {
 		// restore global variables
@@ -39,6 +38,7 @@ func TestFindpaths(t *testing.T) {
 		t.Errorf("Expected the paths to be full")
 	} else {
 		// restore global variables
+		fmt.Println(vars.AllPaths)
 		vars.Colony = colony
 		vars.AllPaths = allPaths
 	}

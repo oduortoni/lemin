@@ -15,6 +15,7 @@ type Printer struct {
 func (p *Printer) Println(args ...any) (n int, err error) {
 	for _, arg := range args {
 		if s, ok := arg.(string); ok {
+			// p.Buffer += s + "\n"
 			p.Buffer += s
 		}
 	}
@@ -54,6 +55,7 @@ func TestMoveAntsRegex(t *testing.T) {
 
 	// run the function
 	MoveAnts(printer.Println, paths)
+	// fmt.Println(printer.Buffer)
 
 	// define the expected pattern and its regex
 	// regex := `L\d+-\w+`

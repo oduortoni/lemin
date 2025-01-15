@@ -41,14 +41,14 @@ func main() {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
-		if line == "##start" {
+		if line == "##start" { // start tag
 			vars.IsStartNode = true
 			continue
-		} else if line == "##end" {
+		} else if line == "##end" { // end tag
 			vars.IsEndNode = true
 			continue
 		}
-		utils.ProcessLine(line)
+		utils.ProcessLine(line) // otherwise, check for rooms of links
 	}
 
 	if vars.AntsNumber < 1 {
