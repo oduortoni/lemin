@@ -32,7 +32,7 @@ Contains so many functions. We have to split them into several files based off f
 
 ### UNDOCUMENTED
 
-- **processpaths/optimalpaths**
+- **processpaths/optimalpaths.go**
 - **utils/utils.go** - there are three functions in there I did not test
 
 
