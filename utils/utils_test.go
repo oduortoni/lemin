@@ -154,37 +154,6 @@ func TestValidRoomConnection(t *testing.T) {
 	}
 }
 
-func TestValidColonyRooms(t *testing.T) {
-	file, err := os.CreateTemp("", "temp_test_*.txt")
-	if err != nil {
-		t.Fatalf("Failed to create temp file: %v", err)
-	}
-	defer os.Remove(file.Name()) // Clean up after test
-
-	_, err = file.WriteString("4\n##start\n0 0 3\n2 2 5\n3 4 0\n##end\n1 8 3\n0-2\n2-3\n3-1\n")
-	if err != nil {
-		t.Fatalf("Failed to write to file: %v", err)
-	}
-
-	// open/close to test if file can handle the open/read cycles
-	err = file.Close() // Close the file after writing
-	if err != nil {
-		t.Fatalf("Failed to close file: %v", err)
-	}
-
-	file, err = os.Open(file.Name()) // reopen the file for reading
-	if err != nil {
-		t.Fatalf("Failed to open file for testing: %v", err)
-	}
-	defer file.Close()
-
-	isValid := ValidColonyRooms(file)
-	if !isValid {
-		t.Errorf("Expected the file to be valid, but got false")
-	}
-}
-
-
 func TestStoreConnectedRooms(t *testing.T) {
 	restore := vars.ConnectedRooms
 	vars.ConnectedRooms = []string{} // set it to empty just in case it was set by other tests
@@ -322,4 +291,93 @@ func TestStoreRoom(t *testing.T) {
 	}
 
 	vars.Rooms = restore
+}
+
+func TestValidColonyRooms(t *testing.T) {
+	file, err := os.CreateTemp("", "temp_test_*.txt")
+	if err != nil {
+		t.Fatalf("Failed to create temp file: %v", err)
+	}
+	defer os.Remove(file.Name()) // Clean up after test
+
+	_, err = file.WriteString("4\n##start\n0 0 3\n2 2 5\n3 4 0\n##end\n1 8 3\n0-2\n2-3\n3-1\n")
+	if err != nil {
+		t.Fatalf("Failed to write to file: %v", err)
+	}
+
+	// open/close to test if file can handle the open/read cycles
+	err = file.Close() // Close the file after writing
+	if err != nil {
+		t.Fatalf("Failed to close file: %v", err)
+	}
+
+	file, err = os.Open(file.Name()) // reopen the file for reading
+	if err != nil {
+		t.Fatalf("Failed to open file for testing: %v", err)
+	}
+	defer file.Close()
+
+	isValid := ValidColonyRooms(file)
+	if !isValid {
+		t.Errorf("Expected the file to be valid, but got false")
+	}
+}
+
+func TestHasStartAndEnd(t *testing.T) {
+	file, err := os.CreateTemp("", "temp_test_*.txt")
+	if err != nil {
+		t.Fatalf("Failed to create temp file: %v", err)
+	}
+	defer os.Remove(file.Name()) // Clean up after test
+
+	_, err = file.WriteString("4\n##start\n0 0 3\n2 2 5\n3 4 0\n##end\n1 8 3\n0-2\n2-3\n3-1\n")
+	if err != nil {
+		t.Fatalf("Failed to write to file: %v", err)
+	}
+
+	// open/close to test if file can handle the open/read cycles
+	err = file.Close() // Close the file after writing
+	if err != nil {
+		t.Fatalf("Failed to close file: %v", err)
+	}
+
+	file, err = os.Open(file.Name()) // reopen the file for reading
+	if err != nil {
+		t.Fatalf("Failed to open file for testing: %v", err)
+	}
+	defer file.Close()
+
+	isValid := HasStartAndEnd(file)
+	if !isValid {
+		t.Errorf("Expected the file to be valid, but got false")
+	}
+}
+
+func TestMaxTurns(t *testing.T) {
+	table := []struct {
+		Paths    []models.Path
+		Expected int
+	}{
+		{
+			Paths: []models.Path{
+				{Rooms: []string{"start", "2", "3", "end"}, Ants: []int{1, 2, 3}}, // 5
+				{Rooms: []string{"start", "2", "end"}, Ants: []int{23, 4}},        // 3
+			},
+			Expected: 5,
+		},
+		{
+			Paths: []models.Path{
+				{Rooms: []string{"start", "end"}, Ants: []int{1, 2, 3}},
+				{Rooms: []string{"start", "2", "end"}, Ants: []int{23, 4}},
+			},
+			Expected: 3,
+		},
+	}
+
+	for _, entry := range table {
+		maxTurns := MaxTurns(entry.Paths)
+		if maxTurns != entry.Expected {
+			t.Errorf("Expected %d max turns but got %d\n", entry.Expected, maxTurns)
+		}
+	}
 }
